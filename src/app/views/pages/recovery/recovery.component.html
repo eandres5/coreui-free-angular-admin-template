@@ -1,0 +1,29 @@
+<div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
+  <p-toast />
+  <c-container>
+    <c-row class="justify-content-center">
+      <c-col lg="7" md="9" xl="6">
+        <c-card class="mx-4">
+          <c-card-body class="p-4">
+            <h1>Restablecer Contraseña</h1>
+            <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="cilLockLocked"></svg>
+                </span>
+              <input autoComplete="new-password" cFormControl placeholder="Password" type="password" [(ngModel)]="password"/>
+            </c-input-group>
+            <c-input-group class="mb-4">
+                <span cInputGroupText>
+                  <svg cIcon name="cilLockLocked"></svg>
+                </span>
+              <input autoComplete="new-password" cFormControl placeholder="Repeat password" type="password" [(ngModel)]="repeatPassword"/>
+            </c-input-group>
+            <div class="d-grid">
+              <button cButton color="success" (click)="actualizarPass()">Actualizar Contraseña</button>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>

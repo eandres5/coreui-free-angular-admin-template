@@ -1,0 +1,202 @@
+<c-card class="my-4">
+  <c-card-body>
+    <div class="card flex justify-center">
+      <p-button (click)="showDialog('nada', 'NUEVO')" label="Nuevo" />
+      <p-toast />
+      <p-confirmdialog />
+      <p-dialog header="Compra" [modal]="true" [(visible)]="visible" [style]="{ width: '90%' }">
+        <div class="container text-center">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="row">
+                <div class="col-sm-5"><span class="input-group-text" >Proveedor</span></div>
+                <div class="col-sm-7">
+                  <select class="form-select" [(ngModel)]="selectedProveedorId" (change)="onProveedorChange($event)">
+                    <option>Seleccione...</option>
+                    <option [value]="item.idUsuario" *ngFor="let item of listaClientes">{{item.nombres}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="input-group mb-3">
+                <span class="input-group-text" >Identificación</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Proveedor"
+                  [value]="selectedProveedor?.identificacion"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="input-group mb-3">
+                <span class="input-group-text" >Dirección</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Proveedor"
+                  [value]="selectedProveedor?.direccion"
+                  readonly
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3">
+              <div class="input-group mb-3">
+                <span class="input-group-text" ># Compra</span>
+                <input type="text" class="form-control" placeholder="Número Compra" aria-label="Número Compra" [(ngModel)]="compra.numeroCompra" aria-describedby="addon-wrapping">
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="input-group mb-3">
+                <label class="input-group-text">Comprobante</label>
+                <select class="form-select" [(ngModel)]="compra.tipoComprobante">
+                  <option selected>...</option>
+                  <option value="FACTURA">FACTURA</option>
+                  <option value="NOTA_VENTA">NOTA_VENTA</option>
+                  <option value="RECIBO">RECIBO</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="input-group mb-3">
+                <label class="input-group-text">IVA</label>
+                <input type="number" class="form-control" placeholder="IVA" [(ngModel)]="compra.iva" aria-describedby="addon-wrapping">
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="input-group mb-3">
+                <span class="input-group-text" >Total Compra</span>
+                <input type="number" class="form-control" placeholder="Total Compra" [(ngModel)]="compra.totalCompra" aria-label="Total Compra" aria-describedby="addon-wrapping">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="input-group mb-3">
+                <span class="input-group-text" >Fecha Compra</span>
+                <input type="date" id="start" name="trip-start" [(ngModel)]="compra.fechaCompra"/>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <button type="button" class="btn btn-success" cdkFocusInitial (click)="buscarProducto()" [disabled]="!habilitarProveedor">Buscar
+                Producto</button>
+            </div>
+            <div class="col-sm-4">
+              <button type="button" class="btn btn-success" (click)="nuevoProducto()" [disabled]="!habilitarProveedor">Nuevo
+                Producto</button>
+            </div>
+          </div>
+          <br>
+          <br>
+          <div class="row" *ngIf="nuevoPro">
+            <div class="col-sm-3">
+              <div class="input-group mb-3">
+                <span class="input-group-text" >Nombre Producto</span>
+                <input type="text" class="form-control" placeholder="Nombre Producto" [(ngModel)]="detalle.nombreProducto" aria-label="Nombre Producto" aria-describedby="addon-wrapping">
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="input-group mb-3">
+                <span class="input-group-text" >Descripción</span>
+                <input type="text" class="form-control" placeholder="Descripción" [(ngModel)]="detalle.descripcion" aria-label="Descripción" aria-describedby="addon-wrapping">
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="input-group mb-3">
+                <span class="input-group-text" >Precio Unitario</span>
+                <input type="number" class="form-control" placeholder="Precio Unitario" [(ngModel)]="detalle.precioUnitario" aria-label="Precio Unitario" aria-describedby="addon-wrapping">
+              </div>
+            </div>
+            <div class="col-sm-2">
+              <div class="input-group mb-3">
+                <span class="input-group-text" >Cantidad</span>
+                <input type="number" class="form-control" placeholder="Cantidad" [(ngModel)]="detalle.cantidadInicial" aria-label="Cantidad" aria-describedby="addon-wrapping">
+              </div>
+            </div>
+            <div class="col-sm-1">
+              <button (click)="agregar()">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p-table
+          [value]="listaProductos"
+          [tableStyle]="{ 'min-width': '50rem' }"
+          [lazy]="true"
+          (onLazyLoad)="onLazyLoad($event)"
+        >
+          <ng-template #header>
+            <tr >
+              <th style="width:15%">Producto</th>
+              <th style="width:25%">Descripción</th>
+              <th style="width:25%">Cantidad</th>
+              <th style="width:10%">Precio</th>
+              <th style="width:25%">Acciones</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-customer>
+            <tr>
+              <td>{{ customer.nombreProducto }}</td>
+              <td>{{ customer.descripcion }}</td>
+              <td>{{ customer.cantidad }}</td>
+              <td>{{ customer.precioUnitario }} $</td>
+              <td>
+                <p-button label="Eliminar" severity="danger" (click)="eliminarProducto(customer)"/>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+        <br>
+        <br>
+        <div class="row" style="display: flex;">
+          <div class="col-sm-9"></div>
+          <div class="col-sm-3" style="display: flex;">
+            <p-button label="Cancelar" severity="secondary" (click)="visible = false" />
+            <p-button label="Guardar" (click)="save()" />
+          </div>
+        </div>
+
+      </p-dialog>
+    </div>
+    <p-table
+      [value]="listaCompras"
+      [paginator]="true"
+      [rows]="5"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [lazy]="true"
+      (onLazyLoad)="onLazyLoad($event)"
+    >
+      <ng-template #header>
+        <tr >
+          <th style="width:10%">Número Compra</th>
+          <th style="width:25%">Comprobante</th>
+          <th style="width:10%">IVA</th>
+          <th style="width:15%">Total Compra</th>
+          <th style="width:15%">Fecha Compra</th>
+          <th style="width:25%">Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-customer>
+        <tr>
+          <td>{{ customer.numeroCompra }}</td>
+          <td>{{ customer.tipoComprobante }}</td>
+          <td>{{ customer.iva }}</td>
+          <td>{{ customer.totalCompra }} $</td>
+          <td>{{ customer.fechaCompra }}</td>
+          <td>
+            <p-button label="Ver" severity="info" (click)="ver(customer)"/>
+<!--            <p-button label="Editar" severity="warn" (click)="showDialog(customer, 'nada')"/>-->
+<!--            <p-button label="Eliminar" severity="danger" (click)="eliminar(customer)"/>-->
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </c-card-body>
+</c-card>

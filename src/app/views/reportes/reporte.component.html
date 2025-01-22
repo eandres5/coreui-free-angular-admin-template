@@ -1,0 +1,32 @@
+<div class="titulo">Reportes</div>
+<div class="row">
+  <div class="col-sm-4">
+    <div class="input-group mb-3">
+      <div class="input-group mb-3">
+        <span class="input-group-text" >Fecha Desde</span>
+        <input type="date" name="trip-start" [(ngModel)]="fechaDesde" />
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="inputGroup-sizing-default">Fecha Hasta</span>
+      <input type="date" name="trip-start" [(ngModel)]="fechaHasta"/>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="inputGroupSelect01">Tipo Reporte</label>
+      <select class="form-select" id="inputGroupSelect01" [(ngModel)]="tipoReporte">
+        <option selected>...</option>
+        <option value="VENTA">Reporte Ventas</option>
+        <option value="COMPRAS">Reporte Compras</option>
+        <option value="DEVOLUCION">Reporte Devolución</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <p-toast />
+    <button type="button" class="btn btn-success" (click)="generarReporte()">Generar</button>
+  </div>
+</div>

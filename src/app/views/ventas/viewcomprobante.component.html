@@ -1,0 +1,112 @@
+<div class="container text-center">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="input-group mb-3">
+        <span class="input-group-text" >Identificación</span>
+        <input type="text" class="form-control" placeholder="Identificación" aria-label="Identificación"
+               aria-describedby="addon-wrapping" [(ngModel)]="comprobante.identificacion" readonly>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="input-group mb-3">
+        <span class="input-group-text" >Nombre cliente</span>
+        <input type="text" class="form-control" placeholder="Nombre cliente" aria-label="Nombre"
+               aria-describedby="addon-wrapping" [(ngModel)]="comprobante.nombreCliente" readonly>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="input-group mb-3">
+        <span class="input-group-text" >Dirección</span>
+        <input type="text" class="form-control" placeholder="Dirección" aria-label="Dirección"
+               aria-describedby="addon-wrapping" [(ngModel)]="comprobante.direccion" readonly>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="input-group mb-3">
+        <span class="input-group-text" ># Comprobante</span>
+        <input type="text" class="form-control" placeholder="Número" [(ngModel)]="comprobante.numeroComprobante"
+               aria-describedby="addon-wrapping" readonly>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="input-group mb-3">
+        <label class="input-group-text" >Comprobante</label>
+        <input type="text" class="form-control" placeholder="Número" [(ngModel)]="comprobante.tipoComprobante"
+               aria-describedby="addon-wrapping" readonly>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="input-group mb-3">
+        <label class="input-group-text" >IVA</label>
+        <input type="text" class="form-control" placeholder="Número" [(ngModel)]="comprobante.iva"
+               aria-describedby="addon-wrapping" readonly>
+      </div>
+    </div>
+    <div class="col-sm-3">
+    </div>
+    <div class="col-sm-4">
+    </div>
+
+  </div>
+  <p-table
+    [value]="listaProductos"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [lazy]="true"
+    (onLazyLoad)="onLazyLoad($event)"
+  >
+    <ng-template #header>
+      <tr >
+        <th style="width:25%">Producto</th>
+        <th style="width:25%">Descripción</th>
+        <th style="width:25%">Cantidad</th>
+        <th style="width:25%">Precio</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-customer>
+      <tr>
+        <td>{{ customer.nombreProducto }}</td>
+        <td>{{ customer.descripcion }}</td>
+        <td>{{ customer.cantidad }}</td>
+        <td>{{ customer.precio }} $</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+      <div class="input-group mb-3">
+        <span class="input-group-text" >Subtotal</span>
+        <input type="text" class="form-control" [(ngModel)]="comprobante.subtotal" aria-label="Cantidad"
+               aria-describedby="addon-wrapping" readonly>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+      <div class="input-group mb-3">
+        <span class="input-group-text" >IVA</span>
+        <input type="text" class="form-control" [(ngModel)]="comprobante.iva" aria-label="Cantidad"
+               aria-describedby="addon-wrapping" readonly>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+      <div class="input-group mb-3">
+        <span class="input-group-text" >Total</span>
+        <input type="text" class="form-control" [(ngModel)]="comprobante.total" aria-label="Cantidad"
+               aria-describedby="addon-wrapping" readonly>
+      </div>
+    </div>
+  </div>
+</div>

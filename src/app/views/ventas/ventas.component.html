@@ -1,0 +1,225 @@
+<c-card class="my-4">
+  <c-card-body>
+    <div class="card flex justify-center">
+      <p-button (click)="showDialog()" label="Nuevo" />
+      <p-toast />
+      <p-dialog header="Venta" [modal]="true" [(visible)]="visible" [style]="{ width: '80%' }">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Identificación</span>
+              <input type="text" class="form-control" placeholder="Identificación" aria-label="Identificación"
+                     aria-describedby="addon-wrapping" (blur)="getProveedor()"
+                     [(ngModel)]="identificacionProveedor" [disabled]="habilitarProveedor">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Nombre cliente</span>
+              <input type="text" class="form-control" placeholder="Nombre cliente" aria-label="Nombre"
+                     aria-describedby="addon-wrapping" [(ngModel)]="nombreProveedor" readonly>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Dirección</span>
+              <input type="text" class="form-control" placeholder="Dirección" aria-label="Dirección"
+                     aria-describedby="addon-wrapping" [(ngModel)]="direccionProveedor" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="input-group mb-3">
+              <span class="input-group-text"># Comprobante</span>
+              <input type="text" class="form-control" placeholder="Número"
+                     [(ngModel)]="comprobante.numeroComprobante" aria-describedby="addon-wrapping" readonly>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="input-group mb-3">
+              <label class="input-group-text" for="inputGroupSelect01">Comprobante</label>
+              <select class="form-select" id="inputGroupSelect01" [(ngModel)]="comprobante.tipoComprobante"
+                      (change)="onTipoComprobante($event)">
+                <option selected>...</option>
+                <option value="FACTURA">FACTURA</option>
+                <option value="NOTA_VENTA">NOTA_VENTA</option>
+                <option value="RECIBO">RECIBO</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="input-group mb-3">
+              <label class="input-group-text" for="inputGroupSelect01">IVA</label>
+              <input type="number" class="form-control" placeholder="IVA" aria-label="IVA"
+                     aria-describedby="addon-wrapping" [(ngModel)]="comprobante.iva" >
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Tipo Pago</span>
+              <select class="form-select" id="inputGroupSelect02" [(ngModel)]="comprobante.tipoPago">
+                <option selected>...</option>
+                <option value="EFECTIVO">Efectivo</option>
+                <option value="TRANSFERENCIA">Transferencia</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <button type="button" class="btn btn-success" cdkFocusInitial (click)="show()"
+                    [disabled]="!habilitarProveedor">
+              Buscar Producto</button>
+          </div>
+          <div class="col-sm-4">
+            <!-- <button type="button" class="btn btn-success" cdkFocusInitial (click)="buscarProducto()" [disabled]="!habilitarProveedor">
+                Buscar Producto</button> -->
+          </div>
+        </div>
+        <br>
+        <div class="row" *ngIf="nuevoPro">
+          <div class="col-sm-3">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Nombre Producto</span>
+              <input type="text" class="form-control" placeholder="Nombre Producto"
+                     [(ngModel)]="detalle.nombreProducto" aria-label="Nombre Producto" aria-describedby="addon-wrapping"
+                     readonly>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="input-group mb-3">
+              <span class="input-group-text" >Descripción</span>
+              <input type="text" class="form-control" placeholder="Descripción" [(ngModel)]="detalle.descripcion"
+                     aria-label="Descripción" aria-describedby="addon-wrapping" readonly>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="input-group mb-3">
+              <span class="input-group-text" >Precio Unitario</span>
+              <input type="text" class="form-control" placeholder="Precio Unitario"
+                     [(ngModel)]="detalle.precioUnitario" aria-label="Precio Unitario" aria-describedby="addon-wrapping"
+                     readonly>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <div class="input-group mb-3">
+              <span class="input-group-text" >Cantidad</span>
+              <input type="number" class="form-control" placeholder="Cantidad" [(ngModel)]="detalle.cantidad"
+                     aria-label="Cantidad" aria-describedby="addon-wrapping" min="1" pattern="^[0-9]">
+            </div>
+          </div>
+          <div class="col-sm-1">
+            <p-button label="Agregar" severity="danger" (click)="agregar()"/>
+          </div>
+        </div>
+        <br>
+        <p-table
+          [value]="listaProductos"
+          [tableStyle]="{ 'min-width': '50rem' }"
+          [lazy]="true"
+          (onLazyLoad)="onLazyLoad($event)"
+        >
+          <ng-template #header>
+            <tr >
+              <th style="width:15%">Producto</th>
+              <th style="width:25%">Descripción</th>
+              <th style="width:25%">Cantidad</th>
+              <th style="width:10%">Precio</th>
+              <th style="width:25%">Acciones</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-customer>
+            <tr>
+              <td>{{ customer.nombreProducto }}</td>
+              <td>{{ customer.descripcion }}</td>
+              <td>{{ customer.cantidad }}</td>
+              <td>{{ customer.precioUnitario }} $</td>
+              <td>
+                <p-button label="Eliminar" severity="danger" (click)="eliminarProducto(customer)"/>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <br>
+        <div class="row">
+          <div class="col-sm-3"></div>
+          <div class="col-sm-3"></div>
+          <div class="col-sm-3"></div>
+          <div class="col-sm-3">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Subtotal</span>
+              <input type="text" class="form-control" [(ngModel)]="comprobante.subtotal" aria-label="Cantidad"
+                     aria-describedby="addon-wrapping" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"></div>
+          <div class="col-sm-3"></div>
+          <div class="col-sm-3"></div>
+          <div class="col-sm-3">
+            <div class="input-group mb-3">
+              <span class="input-group-text">IVA</span>
+              <input type="text" class="form-control" [(ngModel)]="comprobante.iva" aria-label="Cantidad"
+                     aria-describedby="addon-wrapping" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"></div>
+          <div class="col-sm-3"></div>
+          <div class="col-sm-3"></div>
+          <div class="col-sm-3">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Total</span>
+              <input type="text" class="form-control" [(ngModel)]="comprobante.total" aria-label="Cantidad"
+                     aria-describedby="addon-wrapping" readonly>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="display: flex;">
+          <div class="col-sm-9"></div>
+          <div class="col-sm-3" style="display: flex;">
+            <p-button label="Cancelar" severity="secondary" (click)="visible = false" />
+            <p-button label="Guardar" (click)="save()" />
+          </div>
+        </div>
+      </p-dialog>
+
+    </div>
+    <p-table
+      [value]="listaVentas"
+      [paginator]="true"
+      [rows]="5"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [lazy]="true"
+      (onLazyLoad)="onLazyLoad($event)"
+    >
+      <ng-template #header>
+        <tr >
+          <th style="width:15%"># Comprobante</th>
+          <th style="width:25%">Cliente</th>
+          <th style="width:25%">Fecha Emisión</th>
+          <th style="width:10%">Total</th>
+          <th style="width:25%">Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-customer>
+        <tr>
+          <td>{{ customer.numeroComprobante }}</td>
+          <td>{{ customer.usuarioClienteNombre }}</td>
+          <td>{{ customer.fechaEmision }}</td>
+          <td>{{ customer.total }} $</td>
+          <td>
+            <p-button label="Ver" severity="info" (click)="ver(customer)"/>
+            <p-button label="PDF" severity="danger" (click)="descargarPdf(customer)"/>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+  </c-card-body>
+</c-card>

@@ -1,0 +1,163 @@
+<c-card class="my-4">
+
+  <div class="card flex justify-center">
+    <p-button (click)="showDialog('nada', 'NUEVO')" label="Nuevo" />
+    <p-toast />
+    <p-dialog header="Producto" [modal]="true" [(visible)]="visible" [style]="{ width: '80%' }">
+      <div class="container text-center">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-6"><span class="input-group-text" >Proveedor</span></div>
+              <div class="col-sm-6">
+                <select class="form-select" [(ngModel)]="selectedProveedorId" (change)="onProveedorChange($event)">
+                  <option>Seleccione...</option>
+                  <option [value]="item.idUsuario" *ngFor="let item of listaClientes">{{item.nombres}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group mb-3">
+              <span class="input-group-text" >Identificación Proveedor</span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Proveedor"
+                [value]="selectedProveedor?.identificacion"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="input-group mb-3">
+              <span class="input-group-text" >Nombre Producto</span>
+              <input type="text" class="form-control" [(ngModel)]="producto.nombreProducto" placeholder="Nombre Producto" aria-describedby="addon-wrapping">
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group mb-3">
+              <span class="input-group-text" >Descripción</span>
+              <input type="text" class="form-control" [(ngModel)]="producto.descripcion" placeholder="Descripción Producto" aria-describedby="addon-wrapping">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+
+            <div class="input-group mb-3">
+              <span class="input-group-text" >Categoria</span>
+              <input type="text" class="form-control" [(ngModel)]="producto.nombreCategoria" placeholder="Categoria Producto" aria-describedby="addon-wrapping">
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group mb-3">
+              <span class="input-group-text" >Precio</span>
+              <input type="number" class="form-control" [(ngModel)]="producto.precio" placeholder="Precio" aria-describedby="addon-wrapping">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="input-group mb-3">
+              <span class="input-group-text" >Cantidad</span>
+              <input type="number" class="form-control" [(ngModel)]="producto.stock" placeholder="Cantidad" [disabled]="editarStock" aria-describedby="addon-wrapping">
+            </div>
+          </div>
+        </div>
+        <br>
+        <span>La imagen QR se creará al guardar este producto nuevo</span>
+      </div>
+
+      <div class="row" style="display: flex;">
+        <div class="col-sm-9"></div>
+        <div class="col-sm-3" style="display: flex;">
+          <p-button label="Cancelar" severity="secondary" (click)="visible = false" />
+          <p-button label="Guardar" (click)="save()" />
+        </div>
+      </div>
+
+    </p-dialog>
+    <p-confirmdialog />
+    <p-dialog header="Información Producto" [modal]="true" [(visible)]="visibleVer" [style]="{ width: '50%' }">
+      <div class="container text-center" *ngIf="producto">
+        <div class="row">
+          <div class="col-sm-5">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Nombre</span>
+              <input type="text" class="form-control" placeholder="Nombre" aria-describedby="addon-wrapping"
+                     [(ngModel)]="producto.nombreProducto" readonly>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Descripción</span>
+              <input type="text" class="form-control" placeholder="Descripción" aria-label="Nombre"
+                     aria-describedby="addon-wrapping" [(ngModel)]="producto.descripcion" readonly>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <img style="width: 100px; height: 100px" class="qr_img" [src]="imgQr" alt="QR Code" fill>
+          </div>
+          <br>
+        </div>
+        <div class="row">
+          <div class="col-sm-5">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Precio</span>
+              <input type="text" class="form-control" placeholder="Precio" aria-describedby="addon-wrapping"
+                     [(ngModel)]="producto.precio" readonly>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Stock</span>
+              <input type="text" class="form-control" placeholder="Stock"
+                     aria-describedby="addon-wrapping" [(ngModel)]="producto.stock" readonly>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <button (click)="descargarImagen()" class="btn btn-info">Descargar QR</button>
+          </div>
+        </div>
+      </div>
+    </p-dialog>
+  </div>
+
+  <c-card-body>
+    <p-table
+      [value]="listaProductos"
+      [paginator]="true"
+      [rows]="5"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [lazy]="true"
+      (onLazyLoad)="onLazyLoad($event)"
+    >
+      <ng-template #header>
+        <tr >
+          <th style="width:25%">Producto</th>
+          <th style="width:25%">Descripción</th>
+          <th style="width:10%">Cantidad</th>
+          <th style="width:15%">Precio</th>
+          <th style="width:25%">Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-customer>
+        <tr>
+          <td>{{ customer.nombreProducto }}</td>
+          <td>{{ customer.descripcion }}</td>
+          <td>{{ customer.stock }}</td>
+          <td>{{ customer.precio }}</td>
+          <td>
+            <p-button label="Ver" severity="info" (click)="verProducto(customer)"/>
+            <p-button label="Editar" severity="warn" (click)="showDialog(customer, 'nada')"/>
+            <p-button label="Eliminar" severity="danger" (click)="eliminar(customer)"/>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </c-card-body>
+</c-card>

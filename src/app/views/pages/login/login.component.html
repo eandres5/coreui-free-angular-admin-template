@@ -1,0 +1,76 @@
+<div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
+  <c-container breakpoint="md">
+    <c-row class="justify-content-center">
+      <c-col lg="10" xl="8">
+        <c-card-group>
+          <c-card class="p-4">
+            <c-card-body>
+              <h1>Login</h1>
+              <p class="text-body-secondary">Inicio Sesión</p>
+              <c-input-group class="mb-3">
+                  <span cInputGroupText>
+                    <svg cIcon name="cilUser"></svg>
+                  </span>
+                <input autoComplete="username" cFormControl placeholder="Identificación" [(ngModel)]="identificacion" />
+              </c-input-group>
+              <c-input-group class="mb-4">
+                  <span cInputGroupText>
+                    <svg cIcon name="cilLockLocked"></svg>
+                  </span>
+                <input
+                  autoComplete="current-password"
+                  cFormControl
+                  placeholder="Password"
+                  type="password"
+                  [(ngModel)]="password"
+                />
+              </c-input-group>
+              <c-row>
+                <c-col xs="6">
+                  <button cButton class="px-4" color="primary" (click)="login()">
+                    Iniciar
+                  </button>
+                </c-col>
+                <c-col class="text-right" xs="6">
+                  <button cButton class="px-0" color="link" (click)="showOlvidoPassword()">
+                    Olvido la contraseña?
+                  </button>
+                </c-col>
+              </c-row>
+            </c-card-body>
+          </c-card>
+          <c-card [ngStyle]="{'minWidth.%': 44}" class="text-white bg-primary py-5">
+            <c-card-body class="text-center">
+
+            </c-card-body>
+          </c-card>
+        </c-card-group>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>
+
+<p-toast />
+<p-confirmdialog />
+<p-dialog header="Recuperar Contraseña" [modal]="true" [(visible)]="visible" [style]="{ width: '50%' }">
+  <p>Ingresa la cuenta de correo electrónico vinculado con tu usuario.</p>
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="input-group mb-3">
+          <span class="input-group-text" >Correo Electronico</span>
+          <input type="text" class="form-control" placeholder="Correo Electronico" [(ngModel)]="correo" aria-describedby="addon-wrapping">
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row" style="display: flex;">
+      <div class="col-sm-9"></div>
+      <div class="col-sm-3" style="display: flex;">
+        <p-button label="Cancelar" severity="secondary" (click)="visible = false" />
+        <p-button label="Enviar" (click)="save()" />
+      </div>
+    </div>
+  </div>
+
+</p-dialog>
