@@ -54,7 +54,7 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
   selectedSize: any = undefined;
   first: number = 0;
   rows: number = 10;
-
+  selectedFile: File | null = null;
 
   showDialog() {
     this.visible = true;
@@ -194,9 +194,10 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El total de compra es requerido', life: 2500 });
     } else if (this.listaProductos.length === 0) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'La compra debe tener al menos 1 detalle para continuar', life: 2500 });
-    }
-    else if (this.comprobante.tipoPago == "" || this.comprobante.tipoPago == "..." ) {
+    } else if (this.comprobante.tipoPago == "" || this.comprobante.tipoPago == "..." ) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El tipo de pago es requerido', life: 2500 });
+    } else if (this.comprobante.tipoPago == 'TRANSFERENCIA' && this.selectedFile == null) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Debe ingresar el comprobante en formato PDF', life: 3000 });
     } else {
       this.comprobante.DetalleComprobantes = this.listaProductos;
       this.comprobante.total = this.comprobante.total + "";
@@ -219,13 +220,10 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
         this.visible = false;
         this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Devolucion registrada', life: 2500 });
         this.loadDevolucion({ first: 0, rows: 5 });
-
       }, error => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: error.error.message, life: 2500 });
         this.loadDevolucion({ first: 0, rows: 5 });
-
       });
-
     }
   }
 
@@ -313,6 +311,21 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
       },
       data: customer
     });
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.comprobante.fileBase64 = reader.result?.toString() || "";
+      };
+      reader.readAsDataURL(file); // Convierte el archivo a Base64
+    } else {
+      alert('Por favor, seleccione un archivo PDF válido.');
+      this.selectedFile = null;
+    }
   }
 
 }

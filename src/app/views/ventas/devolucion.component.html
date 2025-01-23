@@ -66,6 +66,13 @@
             </div>
           </div>
         </div>
+
+        <div class="row" *ngIf="comprobante.tipoPago === 'TRANSFERENCIA'">
+          <div class="col-sm-3">
+            <input type="file" (change)="onFileSelected($event)" accept="application/pdf" />
+          </div>
+        </div>
+        <br>
         <div class="row">
           <div class="col-sm-3">
             <button type="button" class="btn btn-success" cdkFocusInitial (click)="show()"
