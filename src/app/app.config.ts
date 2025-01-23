@@ -45,10 +45,10 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       theme: {
         preset: Lara
-        // ,
-        // options: {
-        //   darkModeSelector: 'none'
-        // }
+        ,
+        options: {
+          darkModeSelector: 'none'
+        }
       }
     }),
     DialogService,
