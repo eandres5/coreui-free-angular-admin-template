@@ -50,6 +50,10 @@ export class UsuarioService {
     return this.http.get<any>( this.baseUrl + '/api/Usuario/getUsuarioProveedor/' + identificacion);
   }
 
+  getUsuario(id: any) {
+    return this.http.get<any>( this.baseUrl + '/api/Usuario/getUsuarioDto/' + id);
+  }
+
   deleteUsuario(usuarioDto: any){
     return this.http.post<any>( this.baseUrl + '/api/Usuario/deleteUsuario', usuarioDto, { headers: this.httpHeaders }).pipe(
       catchError(e => {

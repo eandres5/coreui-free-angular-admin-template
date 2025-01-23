@@ -16,11 +16,13 @@ export class Comprobante {
     nombreCliente?: string;
     direccion?: string;
     tipoPago?: string;
+    fileBase64?: string;
 
-    constructor(idComprobante: string = '', numeroComprobante: string = '', tipoComprobante: string = '',
+
+  constructor(idComprobante: string = '', numeroComprobante: string = '', tipoComprobante: string = '',
         fechaEmision: string = '', subtotal: string = '', total: string = '', iva: string = '', idUsuarioCliente: string = '',
         idUsuarioComerciante: string = '',tipoTransaccion: string = '', identificacion: string = '', nombreCliente: string = '',
-        direccion: string = '', tipoPago = ''){
+        direccion: string = '', tipoPago = '', fileBase64: string = '') {
         this.idComprobante = idComprobante;
         this.numeroComprobante = numeroComprobante;
         this.tipoComprobante = tipoComprobante;
@@ -35,5 +37,6 @@ export class Comprobante {
         this.nombreCliente = nombreCliente;
         this.direccion = direccion;
         this.tipoPago = tipoPago;
+        this.fileBase64 = fileBase64;
     }
 }

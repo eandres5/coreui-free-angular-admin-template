@@ -8,12 +8,15 @@ import {ComprobanteService} from "../../services/comprobante/comprobante.service
 import {DetallecomprobanteService} from "../../services/DetalleComprobante/detallecomprobante.service";
 import {Comprobante} from "../../models/class/comprobante";
 import {DynamicDialogConfig, DynamicDialogRef} from "primeng/dynamicdialog";
+import {NgIf} from "@angular/common";
 
 @Component({
   templateUrl: 'viewcomprobante.component.html',
   imports: [
     FormsModule,
-    TableModule
+    TableModule,
+    Button,
+    NgIf
   ]
 })
 export class ViewcomprobanteComponent implements OnInit, AfterViewInit {
@@ -60,5 +63,12 @@ export class ViewcomprobanteComponent implements OnInit, AfterViewInit {
     const size = event.rows;
     // this.getAllVentas(page, size);
   }
-}
 
+  downloadPdf(base64String: any, fileName: string) {
+    const link = document.createElement('a');
+    link.href = `data:application/pdf;base64,${base64String}`;
+    link.download = fileName;
+    link.click();
+  }
+
+}

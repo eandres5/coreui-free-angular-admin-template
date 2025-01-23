@@ -44,11 +44,11 @@
                aria-describedby="addon-wrapping" readonly>
       </div>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-3" *ngIf="comprobante.fileBase64">
+      <p-button label="Descargar PDF" severity="danger" (click)="downloadPdf(comprobante.fileBase64, 'documentocargado')"/>
     </div>
     <div class="col-sm-4">
     </div>
-
   </div>
   <p-table
     [value]="listaProductos"

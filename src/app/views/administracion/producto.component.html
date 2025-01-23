@@ -134,6 +134,8 @@
       [tableStyle]="{ 'min-width': '50rem' }"
       [rowsPerPageOptions]="[5, 10, 20]"
       [lazy]="true"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
       (onLazyLoad)="onLazyLoad($event)"
     >
       <ng-template #header>

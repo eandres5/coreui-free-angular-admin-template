@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, HostBinding, Inject, Input, OnInit, Renderer2, forwardRef } from '@angular/core';
-import {DOCUMENT, NgClass, NgIf} from '@angular/common';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import {NgIf} from '@angular/common';
 
-import { getStyle, rgbToHex } from '@coreui/utils';
-import {CardBodyComponent, CardComponent, ColComponent} from '@coreui/angular';
+import {CardBodyComponent, CardComponent} from '@coreui/angular';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TableModule} from "primeng/table";
 import {Button} from "primeng/button";
@@ -17,7 +16,6 @@ import {UsuarioService} from "../../services/usuario/usuario.service";
 import {Footer, MessageService} from "primeng/api";
 import {DetallecomprobanteService} from "../../services/DetalleComprobante/detallecomprobante.service";
 import {PdfService} from "../../services/pdf.service";
-import {CONSTANTES} from "../../util/constantes";
 import {ProductolistComponent} from "./productolist.component";
 import {ViewcomprobanteComponent} from "./viewcomprobante.component";
 
@@ -51,6 +49,12 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
   ref: DynamicDialogRef | undefined;
   dataListProductos!: any[];
   detalleProducto: DetalleProducto = new DetalleProducto();
+  totalRecords: any;
+  loading: boolean = false;
+  selectedSize: any = undefined;
+  first: number = 0;
+  rows: number = 10;
+
 
   showDialog() {
     this.visible = true;
@@ -76,7 +80,7 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.listaVentas = [];
-    this.getAllDevolucion(CONSTANTES.page, CONSTANTES.size);
+    this.loadDevolucion({ first: 0, rows: 5 });
   }
 
   ngAfterViewInit(): void {
@@ -94,9 +98,30 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
   }
 
   onLazyLoad(event: any) {
-    const page = event.first / event.rows;
+    this.loadDevolucion(event);
+  }
+
+  loadDevolucion(event: any): void {
+    const page = Math.floor(event.first / event.rows);
     const size = event.rows;
-    // this.getAllVentas(page, size);
+    this._ventaService.getAllDevolucion((page+ 1) + "", size, null).subscribe({
+      next: (res) => {
+        this.listaVentas = res.items;
+        this.totalRecords = res.totalCount;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar datos', err);
+        this.loading = false;
+      }
+    });
+  }
+
+  onPageChange(event: any) {
+    this.first = event.first;
+    this.rows = event.rows;
+    console.log(this.rows);
+    console.log(this.rows)
   }
 
   buscarProducto() {
@@ -193,10 +218,12 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
       this._ventaService.saveComprobante(this.comprobante).subscribe(res => {
         this.visible = false;
         this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Devolucion registrada', life: 2500 });
-        this.getAllDevolucion(CONSTANTES.page, CONSTANTES.size);
+        this.loadDevolucion({ first: 0, rows: 5 });
+
       }, error => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: error.error.message, life: 2500 });
-        this.getAllDevolucion(CONSTANTES.page, CONSTANTES.size);
+        this.loadDevolucion({ first: 0, rows: 5 });
+
       });
 
     }
@@ -261,7 +288,7 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
 
 
   descargarPdf(element: any) {
-    this._ventaService.getComprobante(element.idComprobante, "VENTA").subscribe(res => {
+    this._ventaService.getComprobante(element.idComprobante, "DEVOLUCION").subscribe(res => {
       this.comprobante = res;
       this.detalleProducto.idComprobante = element.idComprobante;
       this._detalleComprobante.getDetalleProducto(this.detalleProducto).subscribe(res => {

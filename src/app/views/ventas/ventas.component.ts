@@ -18,6 +18,7 @@ import {DetallecomprobanteService} from "../../services/DetalleComprobante/detal
 import {PdfService} from "../../services/pdf.service";
 import {ViewcomprobanteComponent} from "./viewcomprobante.component";
 import {CardBodyComponent, CardComponent} from "@coreui/angular";
+import {PdfVentaService} from "../../services/pdfVenta.service";
 
 
 @Component({
@@ -41,6 +42,10 @@ export class VentasComponent implements OnInit, AfterViewInit {
   ref: DynamicDialogRef | undefined;
   dataListProductos!: any[];
   detalleProducto: DetalleProducto = new DetalleProducto();
+  totalRecords: any;
+  loading: boolean = false;
+  selectedSize: any = undefined;
+  selectedFile: File | null = null;
 
   showDialog() {
     this.visible = true;
@@ -59,7 +64,9 @@ export class VentasComponent implements OnInit, AfterViewInit {
               public dialogService: DialogService,
               public messageService: MessageService,
               private _detalleComprobante: DetallecomprobanteService,
-              public pdfService: PdfService
+              // public pdfService: PdfService,
+              public pdfService: PdfVentaService
+
   ) {
 
   }
@@ -73,10 +80,10 @@ export class VentasComponent implements OnInit, AfterViewInit {
   }
 
   getAllVentas(page: any, size: any) {
-    this._ventaService.getAllVentas(page, size, null).subscribe(
-      (res) => (
+    this._ventaService.getAllVentas(page, size, null).subscribe(res => {
         this.listaVentas = res.items
-      ));
+        this.totalRecords = res.totalCount;
+    });
   }
 
   nuevo() {
@@ -86,7 +93,7 @@ export class VentasComponent implements OnInit, AfterViewInit {
   onLazyLoad(event: any) {
     const page = event.first / event.rows;
     const size = event.rows;
-    // this.getAllVentas(page, size);
+    this.getAllVentas((page + 1) + "", size + "");
   }
 
   buscarProducto() {
@@ -159,9 +166,10 @@ export class VentasComponent implements OnInit, AfterViewInit {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El total de compra es requerido', life: 2500 });
     } else if (this.listaProductos.length === 0) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'La compra debe tener al menos 1 detalle para continuar', life: 2500 });
-    }
-    else if (this.comprobante.tipoPago == "" || this.comprobante.tipoPago == "..." ) {
+    } else if (this.comprobante.tipoPago == "" || this.comprobante.tipoPago == "..." ) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El tipo de pago es requerido', life: 2500 });
+    } else if (this.comprobante.tipoPago == 'TRANSFERENCIA' && this.selectedFile == null) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Debe ingresar el comprobante en formato PDF', life: 3000 });
     } else {
       this.comprobante.DetalleComprobantes = this.listaProductos;
       this.comprobante.total = this.comprobante.total + "";
@@ -188,7 +196,6 @@ export class VentasComponent implements OnInit, AfterViewInit {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: error.error.message, life: 2500 });
         this.getAllVentas(CONSTANTES.page, CONSTANTES.size);
       });
-
     }
   }
 
@@ -276,6 +283,21 @@ export class VentasComponent implements OnInit, AfterViewInit {
       },
       data: customer
     });
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.comprobante.fileBase64 = reader.result?.toString() || "";
+      };
+      reader.readAsDataURL(file); // Convierte el archivo a Base64
+    } else {
+      alert('Por favor, seleccione un archivo PDF válido.');
+      this.selectedFile = null;
+    }
   }
 
 }

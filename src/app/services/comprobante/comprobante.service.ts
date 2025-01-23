@@ -27,7 +27,7 @@ export class ComprobanteService {
     return this.http.get<any>( this.baseUrl + '/api/Comprobante/getComprobante/' + id + "/" + tipoTransaccion);
   }
 
-  getAllVentas(page: string, size: string, search: string | null){
+  getAllVentas(page: any, size: any, search: any){
     return this.http.get<any>( this.baseUrl + '/api/Comprobante/getListaVentas/' + page + '/' + size + "/" + search);
   }
 

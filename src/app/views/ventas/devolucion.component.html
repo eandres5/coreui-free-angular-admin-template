@@ -187,12 +187,14 @@
           </div>
         </div>
       </p-dialog>
-
     </div>
+
     <p-table
       [value]="listaVentas"
       [paginator]="true"
       [rows]="5"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
       [tableStyle]="{ 'min-width': '50rem' }"
       [rowsPerPageOptions]="[5, 10, 20]"
       [lazy]="true"
@@ -220,6 +222,8 @@
         </tr>
       </ng-template>
     </p-table>
+<!--    <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="120" [rowsPerPageOptions]="[10, 20, 30]" />-->
+
 
   </c-card-body>
 </c-card>

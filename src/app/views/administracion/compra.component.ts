@@ -46,6 +46,7 @@ export class CompraComponent implements OnInit, AfterViewInit {
 
   search: String = "";
   visible: boolean = false;
+  visibleVer: boolean = false;
 
   compra: Compra = new Compra();
   listaProductos: any[] = new Array<any>();
@@ -57,15 +58,24 @@ export class CompraComponent implements OnInit, AfterViewInit {
   idProveedor: number = 0;
   detalle: DetalleCompra = new DetalleCompra();
   listaCompras: any[]  = new Array<any>();
+  listaComprasVer: any[]  = new Array<any>();
   selectedProveedor: any = null;
   selectedProveedorId: number | null = null;
+  totalRecords: any;
+  loading: boolean = false;
+  selectedSize: any = undefined;
+  first: number = 0;
+  rows: number = 10;
+  selectedFile: File | null = null;
 
   constructor(private messageService: MessageService,
               private _comprovanteService: ComprobanteService,
               private _clienteService: UsuarioService,
               public dialogService: DialogService,
               private confirmationService: ConfirmationService,
-              private _compraService: CompraService
+              private _compraService: CompraService,
+              private _comprobanteService: ComprobanteService,
+              public usuarioService: UsuarioService
   ) {
 
   }
@@ -79,8 +89,10 @@ export class CompraComponent implements OnInit, AfterViewInit {
   }
 
   getAllCompras(page:any, size:any){
+
     this._compraService.getAllCompras(page, size, null).subscribe(
       res => {
+        this.totalRecords = res.totalCount;
         this.listaCompras = res.items.map((item: Compra) => ({
           ...item,
           fechaCompra: this.formatDate(item.fechaCompra)
@@ -103,40 +115,43 @@ export class CompraComponent implements OnInit, AfterViewInit {
   showDialog(usuario: any, tipo: any) {
     this.visible = true;
     if(tipo === 'NUEVO') {
+      this.selectedProveedor = null;
       this.newProveedor = new UsuarioProveedor();
       this.newProveedor.idUsuario = 0;
-    } else {
-      this.newProveedor.idUsuario = usuario.idUsuario;
-      this.newProveedor.nombres = usuario.nombres;
-      this.newProveedor.apellidos = usuario.apellidos;
-      this.newProveedor.identificacion = usuario.identificacion;
-      this.newProveedor.mail = usuario.mail;
-      this.newProveedor.telefono = usuario.telefono;
-      this.newProveedor.direccion = usuario.direccion;
+      this.compra = new Compra();
     }
   }
 
   ver(customer: any) {
-    this.ref = this.dialogService.open(ViewclienteComponent, {
-      header: 'Informacion Cliente',
-      width: '50%',
-      modal: true,
-      contentStyle: { overflow: 'auto' },
-      closable: true,
-      templates: {
-        footer: Footer
-      },
-      data: customer
+    this._comprobanteService.getCompra(customer.idCompra).subscribe(res=>{
+      if(res){
+        this.compra = res;
+        this.listaComprasVer = res.detalleCompras;
+        this.visibleVer = true;
+        this.usuarioService.getUsuario(this.compra.idUsuarioProveedor).subscribe(res => {
+          this.nombreProveedor = res.nombres;
+          this.identificacionProveedor = res.identificacion;
+          this.direccionProveedor = res.direccion;
+        });
+      }
     });
+  }
+
+  downloadPdf(base64String: any, fileName: string) {
+    const link = document.createElement('a');
+    link.href = `data:application/pdf;base64,${base64String}`;
+    link.download = fileName;
+    link.click();
   }
 
   onLazyLoad(event: any) {
     const page = event.first / event.rows;
     const size = event.rows;
-    // this.getAllVentas(page, size);
+    this.getAllCompras((page + 1) + "", size + "");
   }
 
   save(){
+    console.log(this.selectedFile )
     if (this.selectedProveedor == null) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "Debe seleccionar un proveedor", life: 2500 });
     }else if (Number(this.compra.numeroCompra) <= 0) {
@@ -151,6 +166,8 @@ export class CompraComponent implements OnInit, AfterViewInit {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "La fecha de compra es requerida", life: 2500 });
     } else if (this.listaProductos.length === 0) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "La compra debe tener al menos 1 detalle para continuar", life: 2500 });
+    } else if(this.selectedFile == null) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: "Debe subir la factura en formato PDF para continuar", life: 3000 });
     } else {
       this.compra.detalleCompras = this.listaProductos;
       this.compra.totalCompra = this.compra.totalCompra + "";
@@ -166,7 +183,6 @@ export class CompraComponent implements OnInit, AfterViewInit {
       this.compra.iva = this.compra.iva + "";
       this.compra.detalleCompras = lista;
 
-      console.log(this.selectedProveedor);
       this._compraService.saveCompra(this.compra).subscribe(resp=> {
         this.visible = false;
         this.messageService.add({ severity: 'info', summary: 'Info', detail: "Registro guardado", life: 2500 });
@@ -210,23 +226,6 @@ export class CompraComponent implements OnInit, AfterViewInit {
   }
 
   buscarProducto() {
-    // const dialogRef = this._dialog.open(DialogProductoCompraComponent, {
-    //   width: 'auto',
-    //   // panelClass: 'over-flow-y-auto',
-    //   disableClose: true,
-    //   data: this.identificacionProveedor
-    // });
-    // dialogRef.afterClosed().subscribe(res => {
-    //   if (res) {
-    //     this.nuevoPro = true;
-    //     this.detalle.idProducto = res.idProducto;
-    //     this.detalle.nombreProducto = res.nombreProducto;
-    //     this.detalle.descripcion = res.descripcion;
-    //     this.detalle.stock = '0';
-    //     this.detalle.precioUnitario = res.precio;
-    //   }
-    // });
-
     this.ref = this.dialogService.open(ProductolistComponent, {
       header: 'Lista Productos',
       width: '50vw',
@@ -306,4 +305,20 @@ export class CompraComponent implements OnInit, AfterViewInit {
       this.nuevoPro = false;
     }
   }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.compra.fileBase64 = reader.result?.toString() || "";
+      };
+      reader.readAsDataURL(file); // Convierte el archivo a Base64
+    } else {
+      alert('Por favor, seleccione un archivo PDF válido.');
+      this.selectedFile = null;
+    }
+  }
+
 }

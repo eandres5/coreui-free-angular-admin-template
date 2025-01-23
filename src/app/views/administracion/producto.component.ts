@@ -46,6 +46,8 @@ export class ProductoComponent implements OnInit, AfterViewInit {
   selectedProveedor: any = null;
   selectedProveedorId: number | null = null;
   editarStock: boolean = false;
+  totalRecords: any;
+  loading: boolean = false;
 
   constructor(private _productoService: ProductoService,
               private messageService: MessageService,
@@ -66,15 +68,18 @@ export class ProductoComponent implements OnInit, AfterViewInit {
   getAllProductos(page:any, size:any) {
     this._productoService.getAllPoductosByUsuario(page, size, null).subscribe(res => {
       this.listaProductos = res.items;
+      this.totalRecords = res.totalCount;
     }, error => {
       this.messageService.add({ severity: 'info', summary: 'Info', detail: error.error.message, life: 2500 });
     });
   }
 
   getAllProveedores() {
+    this.loading = true;
     this._clienteService.getAllProveedores('0', '200', null).subscribe(res => {
       this.listaClientes = res.items;
-      console.log(res.items)
+      this.totalRecords = res.totalCount;
+      this.loading = false;
     }, error => {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: error.error.message, life: 2500 });
     });
@@ -83,7 +88,7 @@ export class ProductoComponent implements OnInit, AfterViewInit {
   onLazyLoad(event: any) {
     const page = event.first / event.rows;
     const size = event.rows;
-    // this.getAllVentas(page, size);
+    this.getAllProductos((page + 1) + "" , size);
   }
 
   showDialog(producto: any, tipo: any) {

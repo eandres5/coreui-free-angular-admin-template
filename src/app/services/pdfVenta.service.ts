@@ -7,12 +7,12 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 @Injectable({
   providedIn: 'root'
 })
-export class PdfService {
+export class PdfVentaService {
 
   generarPdf(cabecera: any, detalles: any[]) {
     const documentDefinition: any = {
       content: [
-        { text: 'Comprobante de Devolución', style: 'header' },
+        { text: 'Comprobante de Venta', style: 'header' },
         { text: `Número: ${cabecera.numeroComprobante}`, margin: [0, 10, 0, 5] },
         { text: `Tipo: ${cabecera.tipoComprobante}`, margin: [0, 0, 0, 5] },
         { text: `Fecha de Emisión: ${cabecera.fechaEmision}`, margin: [0, 0, 0, 5] },

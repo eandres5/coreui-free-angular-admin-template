@@ -66,9 +66,15 @@
             </div>
           </div>
         </div>
+        <div class="row" *ngIf="comprobante.tipoPago === 'TRANSFERENCIA'">
+          <div class="col-sm-3">
+            <input type="file" (change)="onFileSelected($event)" accept="application/pdf" />
+          </div>
+        </div>
+        <br>
         <div class="row">
           <div class="col-sm-3">
-            <button type="button" class="btn btn-success" cdkFocusInitial (click)="show()"
+            <button type="button" class="btn btn-success" (click)="show()"
                     [disabled]="!habilitarProveedor">
               Buscar Producto</button>
           </div>
@@ -118,7 +124,6 @@
           [value]="listaProductos"
           [tableStyle]="{ 'min-width': '50rem' }"
           [lazy]="true"
-          (onLazyLoad)="onLazyLoad($event)"
         >
           <ng-template #header>
             <tr >
@@ -193,6 +198,8 @@
       [value]="listaVentas"
       [paginator]="true"
       [rows]="5"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
       [tableStyle]="{ 'min-width': '50rem' }"
       [rowsPerPageOptions]="[5, 10, 20]"
       [lazy]="true"
