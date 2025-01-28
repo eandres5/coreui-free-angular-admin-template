@@ -9,7 +9,7 @@
             <div class="input-group mb-3">
               <span class="input-group-text">Identificación</span>
               <input type="text" class="form-control" placeholder="Identificación" aria-label="Identificación"
-                     aria-describedby="addon-wrapping" (blur)="getProveedor()"
+                     aria-describedby="addon-wrapping"
                      [(ngModel)]="identificacionProveedor" [disabled]="habilitarProveedor">
             </div>
           </div>
@@ -32,51 +32,36 @@
           <div class="col-sm-3">
             <div class="input-group mb-3">
               <span class="input-group-text"># Comprobante</span>
-              <input type="text" class="form-control" placeholder="Número"
-                     [(ngModel)]="comprobante.numeroComprobante" aria-describedby="addon-wrapping" readonly>
+              <input type="text" class="form-control" placeholder="Número" (blur)="getVentaDevolucion()"
+                     [(ngModel)]="comprobante.numeroComprobante" aria-describedby="addon-wrapping">
             </div>
           </div>
           <div class="col-sm-3">
             <div class="input-group mb-3">
-              <label class="input-group-text" for="inputGroupSelect01">Comprobante</label>
-              <select class="form-select" id="inputGroupSelect01" [(ngModel)]="comprobante.tipoComprobante"
-                      (change)="onTipoComprobante($event)">
-                <option selected>...</option>
-                <option value="FACTURA">FACTURA</option>
-                <option value="NOTA_VENTA">NOTA_VENTA</option>
-                <option value="RECIBO">RECIBO</option>
-              </select>
+              <label class="input-group-text">Comprobante</label>
+              <input type="text" class="form-control" placeholder="Dirección" aria-label="Dirección"
+                     aria-describedby="addon-wrapping" [(ngModel)]="comprobante.tipoComprobante" readonly>
             </div>
           </div>
           <div class="col-sm-3">
             <div class="input-group mb-3">
-              <label class="input-group-text" for="inputGroupSelect01">IVA</label>
+              <label class="input-group-text">IVA</label>
               <input type="number" class="form-control" placeholder="IVA" aria-label="IVA"
-                     aria-describedby="addon-wrapping" [(ngModel)]="comprobante.iva" >
+                     aria-describedby="addon-wrapping" [(ngModel)]="comprobante.iva" readonly>
             </div>
           </div>
           <div class="col-sm-3">
             <div class="input-group mb-3">
               <span class="input-group-text">Tipo Pago</span>
-              <select class="form-select" id="inputGroupSelect02" [(ngModel)]="comprobante.tipoPago">
-                <option selected>...</option>
-                <option value="EFECTIVO">Efectivo</option>
-                <option value="TRANSFERENCIA">Transferencia</option>
-              </select>
+              <input type="text" class="form-control" placeholder="Dirección" aria-label="Dirección"
+                     aria-describedby="addon-wrapping" [(ngModel)]="comprobante.tipoPago" readonly>
             </div>
-          </div>
-        </div>
-
-        <div class="row" *ngIf="comprobante.tipoPago === 'TRANSFERENCIA'">
-          <div class="col-sm-3">
-            <input type="file" (change)="onFileSelected($event)" accept="application/pdf" />
           </div>
         </div>
         <br>
         <div class="row">
           <div class="col-sm-3">
-            <button type="button" class="btn btn-success" cdkFocusInitial (click)="show()"
-                    [disabled]="!habilitarProveedor">
+            <button type="button" class="btn btn-success" (click)="show()">
               Buscar Producto</button>
           </div>
           <div class="col-sm-4">
@@ -124,15 +109,13 @@
         <p-table
           [value]="listaProductos"
           [tableStyle]="{ 'min-width': '50rem' }"
-          [lazy]="true"
-          (onLazyLoad)="onLazyLoad($event)"
         >
           <ng-template #header>
             <tr >
               <th style="width:15%">Producto</th>
               <th style="width:25%">Descripción</th>
               <th style="width:25%">Cantidad</th>
-              <th style="width:10%">Precio</th>
+              <th style="width:25%">Precio</th>
               <th style="width:25%">Acciones</th>
             </tr>
           </ng-template>
@@ -229,8 +212,5 @@
         </tr>
       </ng-template>
     </p-table>
-<!--    <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="120" [rowsPerPageOptions]="[10, 20, 30]" />-->
-
-
   </c-card-body>
 </c-card>

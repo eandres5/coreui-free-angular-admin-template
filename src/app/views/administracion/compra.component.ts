@@ -158,7 +158,7 @@ export class CompraComponent implements OnInit, AfterViewInit {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "El numero de compra es requerido", life: 2500 });
     } else if (this.compra.tipoComprobante == '') {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "El tipo de comprabante es requerido", life: 2500 });
-    } else if (Number(this.compra.iva) < 0 || this.compra.iva == '') {
+    } else if (Number(this.compra.iva) < 0 || this.compra.iva === '') {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "El IVA es requerido", life: 2500 });
     } else if (this.compra.totalCompra == '' || this.compra.totalCompra == undefined) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "El total de compra es requerido", life: 2500 });

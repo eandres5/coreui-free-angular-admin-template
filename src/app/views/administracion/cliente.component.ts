@@ -100,18 +100,21 @@ export class ClienteComponent implements OnInit, AfterViewInit {
   }
 
   save(){
+
+    console.log(!this.isValidEmail(this.newProveedor.mail))
+
     if(this.newProveedor.nombres == "" || this.newProveedor.nombres == undefined){
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "Los nombres son requeridos", life: 2500 });
     } else if(this.newProveedor.apellidos == "" || this.newProveedor.apellidos == undefined) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "Los apellidos son requeridos", life: 2500 });
     } else if(this.newProveedor.identificacion == "" || this.newProveedor.identificacion == undefined) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "El número de identificacion es requerido", life: 2500 });
-    } else if(this.newProveedor.telefono == "" || this.newProveedor.telefono == undefined || this.newProveedor.telefono.length < 10) {
+    } else if (!this.isValidEmail(this.newProveedor.mail)) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: "El mail es requerido", life: 2500 });
+    } else if(this.newProveedor.telefono == "" || this.newProveedor.telefono == undefined || this.newProveedor.telefono.length > 10) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "Verifique el campo telefono por favor", life: 2500 });
     } else if (this.newProveedor.direccion == "" || this.newProveedor.direccion == undefined) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "La dirección es requerida", life: 2500 });
-    } else if (this.newProveedor.mail == "" || this.newProveedor.mail == undefined) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: "El mail es requerido", life: 2500 });
     } else if(!CedulaValidator.validarCedula(this.newProveedor.identificacion)){
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "Número de cedula no valido", life: 2500 });
     } else {
@@ -169,6 +172,11 @@ export class ClienteComponent implements OnInit, AfterViewInit {
       },
     });
 
+  }
+
+  isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
 }

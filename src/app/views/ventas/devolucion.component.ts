@@ -34,7 +34,6 @@ import {ViewcomprobanteComponent} from "./viewcomprobante.component";
   ]
 })
 export class DevolucionComponent implements OnInit, AfterViewInit {
-  customers!: any[];
   listaVentas!: any[];
   visible: boolean = false;
   comprobante: Comprobante = new Comprobante();
@@ -47,11 +46,9 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
   idProveedor: number = 0;
   detalle: DetalleComprobante = new DetalleComprobante();
   ref: DynamicDialogRef | undefined;
-  dataListProductos!: any[];
   detalleProducto: DetalleProducto = new DetalleProducto();
   totalRecords: any;
   loading: boolean = false;
-  selectedSize: any = undefined;
   first: number = 0;
   rows: number = 10;
   selectedFile: File | null = null;
@@ -120,8 +117,6 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
   onPageChange(event: any) {
     this.first = event.first;
     this.rows = event.rows;
-    console.log(this.rows);
-    console.log(this.rows)
   }
 
   buscarProducto() {
@@ -165,7 +160,7 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Precio es requerido', life: 2500 });
     } else if (this.listaProductos.some(producto => producto.nombreProducto === this.detalle.nombreProducto)) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El producto ya está agregado en la lista', life: 2500 });
-    } else if (this.comprobante.iva == '' || this.detalle.cantidad < '0') {
+    } else if (this.comprobante.iva === '' || Number(this.comprobante.iva) < 0) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El valor de IVA es requerido', life: 2500 });
     } else {
       this.nuevoPro = false;
@@ -188,7 +183,7 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El número de compra es requerido', life: 2500 });
     } else if (this.comprobante.tipoComprobante == '' || this.comprobante.tipoComprobante == "...") {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El tipo de comprabante es requerido', life: 2500 });
-    } else if (this.comprobante.iva == '') {
+    } else if (this.comprobante.iva === '' || Number(this.comprobante.iva) < 0) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El iva es requerido', life: 2500 });
     } else if (this.comprobante.total == '' || this.comprobante.total == undefined) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El total de compra es requerido', life: 2500 });
@@ -326,6 +321,45 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
       alert('Por favor, seleccione un archivo PDF válido.');
       this.selectedFile = null;
     }
+  }
+
+  getVentaDevolucion() {
+    if((this.identificacionProveedor !== null || this.comprobante.numeroComprobante !== null)
+      || (this.identificacionProveedor !== '' && this.comprobante.numeroComprobante !== '')) {
+      this.cargarInfoVentaDevolucion();
+    }
+  }
+
+  cargarInfoVentaDevolucion() {
+
+    this._comprobanteService.getComprobanteVentaDevolucion(
+      this.identificacionProveedor, this.comprobante.numeroComprobante, "VENTA").subscribe(res => {
+      if(res === null) {
+        this.comprobante = new Comprobante();
+        this.identificacionProveedor = '';
+        this.nombreProveedor = '';
+        this.direccionProveedor = '';
+        this.habilitarProveedor = false;
+        this.listaProductos = new Array<DetalleComprobante>();
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El comprobante no existe', life: 3000 });
+      } else {
+        this.nombreProveedor = res.nombreCliente;
+        this.direccionProveedor = res.direccion;
+        this.comprobante = res;
+        this.comprobante.fileBase64 = "";
+        this.detalleProducto.idComprobante = res.idComprobante;
+        this._detalleComprobante.getDetalleProducto(this.detalleProducto).subscribe(res=> {
+          if(res) {
+            this.listaProductos = res;
+            for (let i = 0; i < res.length; i++) {
+              if(this.listaProductos[i].idProducto == res[i].idProducto) {
+                this.listaProductos[i].precioUnitario = res[i].precio;
+              }
+            }
+          }
+        });
+      }
+    });
   }
 
 }

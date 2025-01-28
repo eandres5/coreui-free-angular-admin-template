@@ -137,8 +137,10 @@ export class VentasComponent implements OnInit, AfterViewInit {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Precio es requerido', life: 2500 });
     } else if (this.listaProductos.some(producto => producto.nombreProducto === this.detalle.nombreProducto)) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El producto ya está agregado en la lista', life: 2500 });
-    } else if (this.comprobante.iva == '' || this.detalle.cantidad < '0') {
+    } else if (this.comprobante.iva === '' || Number(this.comprobante.iva) < 0) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El valor de IVA es requerido', life: 2500 });
+    } else if (Number(this.detalle.cantidad) > Number(this.detalle.stock)) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El stock no es suficiente', life: 2500 });
     } else {
       this.nuevoPro = false;
       const cantidad = parseFloat(this.detalle.cantidad);
@@ -160,7 +162,7 @@ export class VentasComponent implements OnInit, AfterViewInit {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El número de compra es requerido', life: 2500 });
     } else if (this.comprobante.tipoComprobante == '' || this.comprobante.tipoComprobante == "...") {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El tipo de comprabante es requerido', life: 2500 });
-    } else if (this.comprobante.iva == '') {
+    } else if (this.comprobante.iva === '' || Number(this.comprobante.iva) < 0) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El iva es requerido', life: 2500 });
     } else if (this.comprobante.total == '' || this.comprobante.total == undefined) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El total de compra es requerido', life: 2500 });
@@ -242,6 +244,7 @@ export class VentasComponent implements OnInit, AfterViewInit {
         this.detalle.nombreProducto = data.nombreProducto;
         this.detalle.descripcion = data.descripcion;
         this.detalle.precioUnitario = data.precio;
+        this.detalle.stock = data.stock;
       }
     });
 

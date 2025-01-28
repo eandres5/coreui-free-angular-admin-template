@@ -7,6 +7,10 @@ import {ComprobanteService} from "../../services/comprobante/comprobante.service
 import {MessageService} from "primeng/api";
 import pdfMake from "pdfmake/build/pdfmake";
 import {Toast} from "primeng/toast";
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+
+(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+
 
 @Component({
     templateUrl: 'reporte.component.html',
@@ -50,12 +54,13 @@ export class ReporteComponent implements OnInit, AfterViewInit {
       // @ts-ignore
       this._comprovanteService.getReporteComprobantes(this.fechaDesde, this.fechaHasta, this.tipoReporte).subscribe(res => {
         const tableBody = [
+          // Encabezado de la tabla
           [
             { text: 'Número', style: 'tableHeader' },
             { text: 'Cliente', style: 'tableHeader' },
             { text: 'Fecha Registro', style: 'tableHeader' },
             { text: 'Tipo Pago', style: 'tableHeader' },
-            { text: 'Total Productos', style: 'tableHeader' },
+            { text: 'Productos', style: 'tableHeader' }, // Nueva columna para los detalles de productos
             { text: 'Subtotal', style: 'tableHeader' },
             { text: 'Total', style: 'tableHeader' }
           ],
@@ -65,9 +70,11 @@ export class ReporteComponent implements OnInit, AfterViewInit {
             `${item.nombres} ${item.apellidos}`,
             new Date(item.fechaEmision).toLocaleDateString(), // Formatear la fecha
             item.tipoPago,
-            item.items,
+            item.nombresProductos
+              .map((producto: string) => producto) // Mostrar lista de productos con cantidad y descripción
+              .join(',\n'),
             `$${item.subtotal.toFixed(2)}`, // Formatear el subtotal
-            `$${item.total.toFixed(2)}`    // Formatear el total
+            `$${item.total.toFixed(2)}`,
           ])
         ];
 
@@ -82,14 +89,14 @@ export class ReporteComponent implements OnInit, AfterViewInit {
             {
               table: {
                 headerRows: 1,
-                widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto', 'auto'],
+                widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto', '*'], // Ajuste de anchos
                 body: tableBody
               }
             }
           ],
           styles: {
             header: {
-              fontSize: 18,
+              fontSize: 17,
               bold: true,
               margin: [0, 0, 0, 10]
             },
@@ -110,7 +117,7 @@ export class ReporteComponent implements OnInit, AfterViewInit {
       // @ts-ignore
       this._comprovanteService.getReporteCompras(this.fechaDesde, this.fechaHasta).subscribe(res => {
         const tableBody = [
-          // Cabecera de la tabla
+          // Cabecera de la tabla principal
           [
             { text: 'Número Compra', style: 'tableHeader' },
             { text: 'Proveedor', style: 'tableHeader' },
@@ -119,13 +126,23 @@ export class ReporteComponent implements OnInit, AfterViewInit {
             { text: 'Total', style: 'tableHeader' }
           ],
           // Filas dinámicas basadas en el JSON recibido
-          ...res.map((item: any) => [
-            item.numeroComprobante,
-            `${item.nombres} ${item.apellidos}`,
-            new Date(item.fechaEmision).toLocaleDateString(), // Formatear la fecha
-            item.items,
-            `$${item.total.toFixed(2)}`    // Formatear el total
-          ])
+          ...res.flatMap((item: any) => {
+            const mainRow = [
+              item.numeroComprobante,
+              `${item.nombres} ${item.apellidos}`,
+              new Date(item.fechaEmision).toLocaleDateString(), // Formatear la fecha
+              item.items,
+              `$${item.total.toFixed(2)}` // Formatear el total
+            ];
+
+            // Filas para los detalles de productos
+            const productDetails = item.detallesProductos.map((detalle: any) => [
+              { text: `Producto: ${detalle.nombreProducto} Descripción: ${detalle.descripcion} Cantidad: ${detalle.cantidad}`, colSpan: 5, alignment: 'left' },
+              '', '', '', ''
+            ]);
+
+            return [mainRow, ...productDetails]; // Combinar fila principal con detalles
+          })
         ];
 
         // Definir el contenido del PDF
@@ -157,6 +174,8 @@ export class ReporteComponent implements OnInit, AfterViewInit {
             }
           }
         };
+
+        // Generar y descargar el PDF
         // @ts-ignore
         pdfMake.createPdf(documentDefinition).download('reporte.pdf');
       }, error => {

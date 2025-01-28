@@ -66,18 +66,14 @@ export class DashboardComponent implements OnInit {
 
     this._comprobantes.getResumenVentas().subscribe(res=> {
       this.listaVentas = res;
-      console.log(res);
-
     });
 
     this._comprobantes.getResumenComprobantes('DEVOLUCION').subscribe(res=> {
       this.listaDevolucion = res;
-      console.log(res);
     });
 
     this._comprobantes.getResumenCompras().subscribe(res=> {
       this.listaCompras = res;
-      console.log(res);
     });
 
   }
