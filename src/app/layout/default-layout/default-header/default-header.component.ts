@@ -94,4 +94,10 @@ export class DefaultHeaderComponent extends HeaderComponent {
       });
     }
   }
+
+  salir() {
+    localStorage.removeItem('token');
+    this.router.navigate(['']);
+  }
+
 }
