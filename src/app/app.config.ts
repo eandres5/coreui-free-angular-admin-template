@@ -1,5 +1,5 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule, provideAnimations} from '@angular/platform-browser/animations';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -15,12 +15,13 @@ import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import Lara from '@primeng/themes/lara';
-import {HTTP_INTERCEPTORS, provideHttpClient} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptors} from "@angular/common/http";
 import {provideToastr, ToastrModule} from "ngx-toastr";
 import {DialogService} from "primeng/dynamicdialog";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {HttprequestInterceptor} from "./interceptor/httprequest.interceptor";
 import {NgxSpinnerModule} from "ngx-spinner";
+import {loadingInterceptor} from "./core/interceptors/loading.interceptor";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -55,7 +56,11 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     ConfirmationService,
     provideHttpClient(),
-    importProvidersFrom(SidebarModule, DropdownModule, NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' })
+    provideHttpClient(withInterceptors([loadingInterceptor])),
+    importProvidersFrom(SidebarModule,
+      DropdownModule,
+      NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' }),
+      BrowserAnimationsModule
     ),
     IconSetService,
     provideAnimations(),

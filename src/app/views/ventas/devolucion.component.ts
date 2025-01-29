@@ -325,7 +325,8 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
 
   getVentaDevolucion() {
     if((this.identificacionProveedor !== null || this.comprobante.numeroComprobante !== null)
-      || (this.identificacionProveedor !== '' && this.comprobante.numeroComprobante !== '')) {
+      || (this.identificacionProveedor !== '' && this.comprobante.numeroComprobante !== '')
+    || (this.comprobante.tipoComprobante !== '' || this.comprobante.tipoComprobante !== null)) {
       this.cargarInfoVentaDevolucion();
     }
   }
@@ -333,7 +334,7 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
   cargarInfoVentaDevolucion() {
 
     this._comprobanteService.getComprobanteVentaDevolucion(
-      this.identificacionProveedor, this.comprobante.numeroComprobante, "VENTA").subscribe(res => {
+      this.identificacionProveedor, this.comprobante.numeroComprobante, "VENTA", this.comprobante.tipoComprobante).subscribe(res => {
       if(res === null) {
         this.comprobante = new Comprobante();
         this.identificacionProveedor = '';

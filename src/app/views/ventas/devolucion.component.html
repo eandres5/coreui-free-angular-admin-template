@@ -15,32 +15,36 @@
           </div>
           <div class="col-sm-4">
             <div class="input-group mb-3">
-              <span class="input-group-text">Nombre cliente</span>
-              <input type="text" class="form-control" placeholder="Nombre cliente" aria-label="Nombre"
-                     aria-describedby="addon-wrapping" [(ngModel)]="nombreProveedor" readonly>
+              <span class="input-group-text"># Comprobante</span>
+              <input type="text" class="form-control" placeholder="Número"
+                     [(ngModel)]="comprobante.numeroComprobante" aria-describedby="addon-wrapping">
             </div>
           </div>
           <div class="col-sm-4">
             <div class="input-group mb-3">
-              <span class="input-group-text">Dirección</span>
-              <input type="text" class="form-control" placeholder="Dirección" aria-label="Dirección"
-                     aria-describedby="addon-wrapping" [(ngModel)]="direccionProveedor" readonly>
+              <label class="input-group-text">Comprobante</label>
+              <select class="form-select" [(ngModel)]="comprobante.tipoComprobante" (blur)="getVentaDevolucion()">
+                <option selected>...</option>
+                <option value="FACTURA">FACTURA</option>
+                <option value="NOTA_VENTA">NOTA_VENTA</option>
+                <option value="RECIBO">RECIBO</option>
+              </select>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-sm-3">
             <div class="input-group mb-3">
-              <span class="input-group-text"># Comprobante</span>
-              <input type="text" class="form-control" placeholder="Número" (blur)="getVentaDevolucion()"
-                     [(ngModel)]="comprobante.numeroComprobante" aria-describedby="addon-wrapping">
+              <span class="input-group-text">Nombre cliente</span>
+              <input type="text" class="form-control" placeholder="Nombre cliente" aria-label="Nombre"
+                     aria-describedby="addon-wrapping" [(ngModel)]="nombreProveedor" readonly>
             </div>
           </div>
           <div class="col-sm-3">
             <div class="input-group mb-3">
-              <label class="input-group-text">Comprobante</label>
-              <input type="text" class="form-control" placeholder="Dirección" aria-label="Dirección"
-                     aria-describedby="addon-wrapping" [(ngModel)]="comprobante.tipoComprobante" readonly>
+              <span class="input-group-text">Dirección cliente</span>
+              <input type="text" class="form-control" placeholder="Dirección cliente" aria-label="Dirección"
+                     aria-describedby="addon-wrapping" [(ngModel)]="direccionProveedor" readonly>
             </div>
           </div>
           <div class="col-sm-3">
@@ -53,7 +57,7 @@
           <div class="col-sm-3">
             <div class="input-group mb-3">
               <span class="input-group-text">Tipo Pago</span>
-              <input type="text" class="form-control" placeholder="Dirección" aria-label="Dirección"
+              <input type="text" class="form-control" placeholder="Tipo Pago" aria-label="Tipo Pago"
                      aria-describedby="addon-wrapping" [(ngModel)]="comprobante.tipoPago" readonly>
             </div>
           </div>

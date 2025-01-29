@@ -27,8 +27,8 @@ export class ComprobanteService {
     return this.http.get<any>( this.baseUrl + '/api/Comprobante/getComprobante/' + id + "/" + tipoTransaccion);
   }
 
-  getComprobanteVentaDevolucion(identificacion: string, numeroComprobante: string, tipoTransaccion: string){
-    return this.http.get<any>( this.baseUrl + '/api/Comprobante/getComprobanteVentaDevolucion/' + identificacion + "/" + numeroComprobante + "/" + tipoTransaccion);
+  getComprobanteVentaDevolucion(identificacion: string, numeroComprobante: string, tipoTransaccion: string, tipoComprobante: string){
+    return this.http.get<any>( this.baseUrl + '/api/Comprobante/getComprobanteVentaDevolucion/' + identificacion + "/" + numeroComprobante + "/" + tipoTransaccion + "/" + tipoComprobante);
   }
 
   getAllVentas(page: any, size: any, search: any){

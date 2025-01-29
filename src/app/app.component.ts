@@ -7,11 +7,12 @@ import { delay, filter, map, tap } from 'rxjs/operators';
 import { ColorModeService } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from './icons/icon-subset';
+import {NgxSpinnerModule} from "ngx-spinner";
 
 @Component({
     selector: 'app-root',
-    template: '<router-outlet />',
-    imports: [RouterOutlet]
+    template: '<router-outlet /> <ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Cargando... </p></ngx-spinner>',
+    imports: [RouterOutlet, NgxSpinnerModule]
 })
 export class AppComponent implements OnInit {
   title = 'Pyme';
