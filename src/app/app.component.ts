@@ -8,11 +8,14 @@ import { ColorModeService } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from './icons/icon-subset';
 import {NgxSpinnerModule} from "ngx-spinner";
+import {Chart, registerables}  from "chart.js";
+import {Toast} from "primeng/toast";
+Chart.register(...registerables)
 
 @Component({
     selector: 'app-root',
     template: '<router-outlet /> <ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Cargando... </p></ngx-spinner>',
-    imports: [RouterOutlet, NgxSpinnerModule]
+  imports: [RouterOutlet, NgxSpinnerModule]
 })
 export class AppComponent implements OnInit {
   title = 'Pyme';

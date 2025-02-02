@@ -71,4 +71,9 @@ export class ComprobanteService {
   getUltimoNumeroComprobante(tipoComprobante: string){
     return this.http.get<any>( this.baseUrl + '/api/Comprobante/getUltimoComprobante/' + tipoComprobante);
   }
+
+  getReporteGrafico(transaccion: string){
+    return this.http.get<any>( this.baseUrl + '/api/Comprobante/getReporteGrafico/' + transaccion);
+  }
+
 }
