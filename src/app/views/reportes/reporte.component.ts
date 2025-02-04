@@ -1,6 +1,4 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-
-
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TableModule} from "primeng/table";
 import {ComprobanteService} from "../../services/comprobante/comprobante.service";
@@ -8,9 +6,9 @@ import {MessageService} from "primeng/api";
 import pdfMake from "pdfmake/build/pdfmake";
 import {Toast} from "primeng/toast";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import {NgForOf, NgIf} from "@angular/common";
 
 (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
-
 
 @Component({
     templateUrl: 'reporte.component.html',
@@ -18,7 +16,9 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
     ReactiveFormsModule,
     TableModule,
     FormsModule,
-    Toast
+    Toast,
+    NgIf,
+    NgForOf
   ]
 })
 export class ReporteComponent implements OnInit, AfterViewInit {
@@ -26,6 +26,12 @@ export class ReporteComponent implements OnInit, AfterViewInit {
   fechaDesde: String = "";
   fechaHasta: String = "";
   tipoReporte: String = "";
+  listaReporte: any[] = [];
+  listaComprobantes: any[] = [];
+  totalRecords: any;
+  loading: boolean = false;
+  verCompra: boolean = false;
+  verReportes: boolean = false;
 
   constructor(private messageService: MessageService,
               private _comprovanteService: ComprobanteService
@@ -40,7 +46,7 @@ export class ReporteComponent implements OnInit, AfterViewInit {
   }
 
   generarReporte() {
-    if (!this.fechaDesde || !this.fechaHasta || !this.tipoReporte) {
+    if (!this.fechaDesde || !this.fechaHasta || !this.tipoReporte || this.tipoReporte === '...') {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: "Debe ingresar todos los datos para continuar", life: 2500 });
       return;
     }
@@ -184,6 +190,48 @@ export class ReporteComponent implements OnInit, AfterViewInit {
     }
   }
 
+  onLazyLoad(event: any) {
+    const page = event.first / event.rows;
+    const size = event.rows;
+  }
+
+  getTipoReporte() {
+
+    if (!this.fechaDesde || !this.fechaHasta || !this.tipoReporte || this.tipoReporte === '...') {
+      this.listaReporte = [];
+      this.listaComprobantes = [];
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: "Debe ingresar todos los datos para continuar", life: 2500 });
+      return;
+    }
+
+    if (this.fechaDesde > this.fechaHasta) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: "La fecha desde no puede ser mayor a la fecha hasta", life: 2500 });
+      return;
+    }
+
+    if (this.tipoReporte == "COMPRAS") {
+      // @ts-ignore
+      this._comprovanteService.getReporteCompras(this.fechaDesde, this.fechaHasta).subscribe(res => {
+        this.verCompra = true;
+        this.verReportes = false;
+        if (res) {
+          this.listaReporte = res;
+        } else {
+          this.listaReporte = [];
+        }
+      })
+    } else {
+      // @ts-ignore
+      this._comprovanteService.getReporteComprobantes(this.fechaDesde, this.fechaHasta, this.tipoReporte).subscribe(res => {
+        this.verReportes = true;
+        this.verCompra = false;
+        if (res) {
+          this.listaComprobantes = res;
+        } else {
+          this.listaComprobantes = [];
+        }
+      })
+    }
+  }
 
 }
-

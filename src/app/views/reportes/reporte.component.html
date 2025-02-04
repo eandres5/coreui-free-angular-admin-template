@@ -17,7 +17,8 @@
   <div class="col-sm-3">
     <div class="input-group mb-3">
       <label class="input-group-text" for="inputGroupSelect01">Tipo Reporte</label>
-      <select class="form-select" id="inputGroupSelect01" [(ngModel)]="tipoReporte">
+      <select class="form-select" id="inputGroupSelect01" [(ngModel)]="tipoReporte"
+              (change)="getTipoReporte()">
         <option selected>...</option>
         <option value="VENTA">Reporte Ventas</option>
         <option value="COMPRAS">Reporte Compras</option>
@@ -29,4 +30,73 @@
     <p-toast />
     <button type="button" class="btn btn-success" (click)="generarReporte()">Generar</button>
   </div>
+</div>
+<div *ngIf="verCompra">
+  <p-table
+    [value]="listaReporte"
+    [tableStyle]="{ 'min-width': '60rem' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width:15%">Nombres</th>
+        <th style="width:15%">Apellidos</th>
+        <th style="width:10%">Items</th>
+        <th style="width:15%">Subtotal</th>
+        <th style="width:15%">Total</th>
+        <th style="width:30%">Productos</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-compra>
+      <tr>
+        <td>{{ compra.nombres }}</td>
+        <td>{{ compra.apellidos }}</td>
+        <td>{{ compra.items }}</td>
+        <td>${{ compra.subtotal }}</td>
+        <td>${{ compra.total }}</td>
+        <td>
+          <ul *ngIf="compra.detallesProductos?.length > 0">
+            <li *ngFor="let producto of compra.detallesProductos">
+              <b>{{ producto.nombreProducto }}</b> - {{ producto.descripcion }} (Cantidad: {{ producto.cantidad }})
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div *ngIf="verReportes">
+  <p-table
+    [value]="listaComprobantes"
+    [tableStyle]="{ 'min-width': '60rem' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width:15%">Nombres</th>
+        <th style="width:15%">Apellidos</th>
+        <th style="width:10%">Items</th>
+        <th style="width:15%">Subtotal</th>
+        <th style="width:15%">Total</th>
+        <th style="width:30%">Productos</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-compra>
+      <tr>
+        <td>{{ compra.nombres }}</td>
+        <td>{{ compra.apellidos }}</td>
+        <td>{{ compra.items }}</td>
+        <td>${{ compra.subtotal }}</td>
+        <td>${{ compra.total }}</td>
+        <td>
+          <ul *ngIf="compra.nombresProductos?.length > 0">
+            <li *ngFor="let producto of compra.nombresProductos">
+              <b>{{ producto }}</b> - {{ producto.descripcion }} (Cantidad: {{ producto.cantidad }})
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>

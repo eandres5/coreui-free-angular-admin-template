@@ -191,8 +191,6 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'La compra debe tener al menos 1 detalle para continuar', life: 2500 });
     } else if (this.comprobante.tipoPago == "" || this.comprobante.tipoPago == "..." ) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El tipo de pago es requerido', life: 2500 });
-    } else if (this.comprobante.tipoPago == 'TRANSFERENCIA' && this.selectedFile == null) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Debe ingresar el comprobante en formato PDF', life: 3000 });
     } else {
       this.comprobante.DetalleComprobantes = this.listaProductos;
       this.comprobante.total = this.comprobante.total + "";
