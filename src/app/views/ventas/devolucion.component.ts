@@ -140,7 +140,7 @@ export class DevolucionComponent implements OnInit, AfterViewInit {
     if(selectedValue == "...") {
       this.comprobante.numeroComprobante = '';
     } else {
-      this._comprobanteService.getUltimoNumeroComprobante(selectedValue).subscribe(res => {
+      this._comprobanteService.getUltimoNumeroComprobante(selectedValue, "DEVOLUCION").subscribe(res => {
         if(res) {
           this.comprobante.numeroComprobante = res;
         }

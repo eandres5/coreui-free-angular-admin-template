@@ -28,7 +28,6 @@ export class ReporteComponent implements OnInit, AfterViewInit {
   tipoReporte: String = "";
   listaReporte: any[] = [];
   listaComprobantes: any[] = [];
-  totalRecords: any;
   loading: boolean = false;
   verCompra: boolean = false;
   verReportes: boolean = false;
@@ -65,6 +64,7 @@ export class ReporteComponent implements OnInit, AfterViewInit {
             { text: 'Número', style: 'tableHeader' },
             { text: 'Cliente', style: 'tableHeader' },
             { text: 'Fecha Registro', style: 'tableHeader' },
+            { text: 'Comprobante', style: 'tableHeader' },
             { text: 'Tipo Pago', style: 'tableHeader' },
             { text: 'Productos', style: 'tableHeader' }, // Nueva columna para los detalles de productos
             { text: 'Subtotal', style: 'tableHeader' },
@@ -74,7 +74,8 @@ export class ReporteComponent implements OnInit, AfterViewInit {
           ...res.map((item: any) => [
             item.numeroComprobante,
             `${item.nombres} ${item.apellidos}`,
-            new Date(item.fechaEmision).toLocaleDateString(), // Formatear la fecha
+            new Date(item.fechaEmision).toLocaleDateString(),
+            item.tipoComprobante,
             item.tipoPago,
             item.nombresProductos
               .map((producto: string) => producto) // Mostrar lista de productos con cantidad y descripción
@@ -95,7 +96,7 @@ export class ReporteComponent implements OnInit, AfterViewInit {
             {
               table: {
                 headerRows: 1,
-                widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto', '*'], // Ajuste de anchos
+                widths: ['auto', '*', 'auto','auto', 'auto', 'auto', 'auto', '*'], // Ajuste de anchos
                 body: tableBody
               }
             }
@@ -123,31 +124,29 @@ export class ReporteComponent implements OnInit, AfterViewInit {
       // @ts-ignore
       this._comprovanteService.getReporteCompras(this.fechaDesde, this.fechaHasta).subscribe(res => {
         const tableBody = [
-          // Cabecera de la tabla principal
+          // Cabecera de la tabla
           [
             { text: 'Número Compra', style: 'tableHeader' },
             { text: 'Proveedor', style: 'tableHeader' },
+            { text: 'Comprobante', style: 'tableHeader' },
+            { text: 'Detalle Productos', style: 'tableHeader' },
             { text: 'Fecha Compra', style: 'tableHeader' },
             { text: 'Total Productos', style: 'tableHeader' },
             { text: 'Total', style: 'tableHeader' }
           ],
           // Filas dinámicas basadas en el JSON recibido
-          ...res.flatMap((item: any) => {
-            const mainRow = [
+          ...res.map((item: any) => {
+            return [
               item.numeroComprobante,
               `${item.nombres} ${item.apellidos}`,
-              new Date(item.fechaEmision).toLocaleDateString(), // Formatear la fecha
+              item.tipoComprobante,
+              item.detallesProductos.map((detalle: any) =>
+                `Producto: ${detalle.nombreProducto}, \nDesc: ${detalle.descripcion}, Cantidad: ${detalle.cantidad}`
+              ).join('\n'),
+              new Date(item.fechaEmision).toLocaleDateString(), // Formatear fecha
               item.items,
-              `$${item.total.toFixed(2)}` // Formatear el total
+              `$${item.total.toFixed(2)}`
             ];
-
-            // Filas para los detalles de productos
-            const productDetails = item.detallesProductos.map((detalle: any) => [
-              { text: `Producto: ${detalle.nombreProducto} Descripción: ${detalle.descripcion} Cantidad: ${detalle.cantidad}`, colSpan: 5, alignment: 'left' },
-              '', '', '', ''
-            ]);
-
-            return [mainRow, ...productDetails]; // Combinar fila principal con detalles
           })
         ];
 
@@ -162,7 +161,7 @@ export class ReporteComponent implements OnInit, AfterViewInit {
             {
               table: {
                 headerRows: 1,
-                widths: ['auto', '*', 'auto', 'auto', 'auto'],
+                widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto', '*'],
                 body: tableBody
               }
             }
@@ -226,6 +225,7 @@ export class ReporteComponent implements OnInit, AfterViewInit {
         this.verReportes = true;
         this.verCompra = false;
         if (res) {
+          console.log(res)
           this.listaComprobantes = res;
         } else {
           this.listaComprobantes = [];

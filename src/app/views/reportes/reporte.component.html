@@ -40,10 +40,9 @@
       <tr>
         <th style="width:15%">Nombres</th>
         <th style="width:15%">Apellidos</th>
-        <th style="width:10%">Items</th>
-        <th style="width:15%">Subtotal</th>
+        <th style="width:10%">Comprobante</th>
         <th style="width:15%">Total</th>
-        <th style="width:30%">Productos</th>
+        <th style="width:45%">Productos</th>
       </tr>
     </ng-template>
 
@@ -51,8 +50,7 @@
       <tr>
         <td>{{ compra.nombres }}</td>
         <td>{{ compra.apellidos }}</td>
-        <td>{{ compra.items }}</td>
-        <td>${{ compra.subtotal }}</td>
+        <td>{{ compra.tipoComprobante }}</td>
         <td>${{ compra.total }}</td>
         <td>
           <ul *ngIf="compra.detallesProductos?.length > 0">
@@ -75,7 +73,7 @@
       <tr>
         <th style="width:15%">Nombres</th>
         <th style="width:15%">Apellidos</th>
-        <th style="width:10%">Items</th>
+        <th style="width:10%">Comprobante</th>
         <th style="width:15%">Subtotal</th>
         <th style="width:15%">Total</th>
         <th style="width:30%">Productos</th>
@@ -86,7 +84,7 @@
       <tr>
         <td>{{ compra.nombres }}</td>
         <td>{{ compra.apellidos }}</td>
-        <td>{{ compra.items }}</td>
+        <td>{{ compra.tipoComprobante }}</td>
         <td>${{ compra.subtotal }}</td>
         <td>${{ compra.total }}</td>
         <td>

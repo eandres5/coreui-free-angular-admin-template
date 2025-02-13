@@ -68,8 +68,8 @@ export class ComprobanteService {
     return this.http.get<any>( this.baseUrl + '/api/Comprobante/getResumenVentas');
   }
 
-  getUltimoNumeroComprobante(tipoComprobante: string){
-    return this.http.get<any>( this.baseUrl + '/api/Comprobante/getUltimoComprobante/' + tipoComprobante);
+  getUltimoNumeroComprobante(tipoComprobante: string, tipoTransaccion: string){
+    return this.http.get<any>( this.baseUrl + '/api/Comprobante/getUltimoComprobante/' + tipoComprobante + '/' + tipoTransaccion);
   }
 
   getReporteGrafico(transaccion: string){

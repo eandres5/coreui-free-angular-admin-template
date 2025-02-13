@@ -117,7 +117,7 @@ export class VentasComponent implements OnInit, AfterViewInit {
     if(selectedValue == "...") {
       this.comprobante.numeroComprobante = '';
     } else {
-      this._comprobanteService.getUltimoNumeroComprobante(selectedValue).subscribe(res => {
+      this._comprobanteService.getUltimoNumeroComprobante(selectedValue, "VENTA").subscribe(res => {
         if(res) {
           this.comprobante.numeroComprobante = res;
         }
