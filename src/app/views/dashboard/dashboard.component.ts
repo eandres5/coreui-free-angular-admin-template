@@ -44,8 +44,8 @@ export class DashboardComponent implements OnInit {
       }
     });
 
-    this._comprobantes.getResumenCompras().subscribe(res => {
-      this.createChart(res);
+    this._comprobantes.getReporteGraficoCompras().subscribe(res => {
+      this.createChartCompras(res);
     });
 
     this._comprobantes.getReporteGrafico('VENTA').subscribe(res => {
@@ -108,34 +108,37 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  createChart(data: { tipoComprobante: string, total: number }[]): void {
-    // Extraer los nombres de los comprobantes y sus valores
-    const labels = data.map(d => d.tipoComprobante);
-    const values = data.map(d => d.total);
+  createChartCompras(listaCompras: any[]): void {
+    const labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-    // Definir colores para los tipos de comprobante
-    const backgroundColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
+    // Inicializar datos en 0 para los 12 meses
+    const comprasData = new Array(12).fill(0);
 
-    // Crear gráfico tipo doughnut (puede ser "pie" también)
+    // Asignar valores obtenidos de la API a los meses correspondientes
+    listaCompras.forEach(c => {
+      comprasData[c.mes - 1] = c.totalVentas; // Restamos 1 porque los meses van de 1 a 12
+    });
+
+    // Crear gráfico de barras
     this.comprobanteChart = new Chart('ComprobanteChart', {
-      type: 'doughnut',
+      type: 'bar',
       data: {
         labels: labels,
-        datasets: [{
-          data: values,
-          backgroundColor: backgroundColors.slice(0, data.length), // Solo los colores necesarios
-          hoverOffset: 4
-        }]
+        datasets: [
+          {
+            label: 'Compras Mensuales',
+            data: comprasData,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)', // Verde agua
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }
+        ]
       },
       options: {
         responsive: true,
-        plugins: {
-          legend: {
-            position: 'top'
-          },
-          title: {
-            display: true,
-            text: 'Totales por Tipo de Comprobante'
+        scales: {
+          y: {
+            beginAtZero: true
           }
         }
       }

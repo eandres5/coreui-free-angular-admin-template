@@ -76,4 +76,8 @@ export class ComprobanteService {
     return this.http.get<any>( this.baseUrl + '/api/Comprobante/getReporteGrafico/' + transaccion);
   }
 
+  getReporteGraficoCompras(){
+    return this.http.get<any>( this.baseUrl + '/api/Comprobante/getReporteGraficoCompras');
+  }
+
 }
